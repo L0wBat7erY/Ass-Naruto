@@ -57,6 +57,7 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
                 }
             }
             
+            
             cout<<event.code<<": "<<pList->getSize()<<endl;
             
             return true;
@@ -78,8 +79,8 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
             L1List<NinjaInfo>* pList = new L1List<NinjaInfo>;
             L1List<NinjaInfo>* pnewList = new L1List<NinjaInfo>;
             unsigned long size1 = nList.getSize();
-            unsigned long size2 = pList->getSize();
-            unsigned long size3 = pnewList->getSize();
+            
+            
             int a=0;
             double dmax=0, Smax=0;
             pList->insertHead(nList.at(0));
@@ -90,27 +91,34 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
                     pList->insertHead(nList.at(i));
                 }
             }
-            int b=0;
-            int dem = 0;
-            for(int i=0; i<size2; i++)
+            unsigned long size2 = pList->getSize();
+            int j=0;
+            string foundid;
+            while(j<size2)
             {
-                if(pnewList->find(pList->at(i), b)==false)
+                pnewList->insertHead(pList->at(j));
+                int b=0;
+                for(int i=0; i<size1; i++)
                 {
-                    pnewList->insertHead(pList->at(i));
+                    if(pnewList->find(nList.at(i), b)==true)
+                        pnewList->insertHead(nList.at(i));
                 }
-                for(int j=1; j<size3; j++)
+                unsigned long size3 = pnewList->getSize();
+            
+                for(int i=1; i<size3; i++)
                 {
-                    double d = distanceEarth(pnewList->at(j).latitude, pnewList->at(j).longitude, pnewList->at(j-1).latitude, pnewList->at(j-1).longitude);
+                    double d = distanceEarth(pnewList->at(i).latitude, pnewList->at(i).longitude, pnewList->at(i-1).latitude, pnewList->at(i-1).longitude);
                     dmax = dmax + d;
                 }
                 if(Smax<=dmax)
                 {
-                    dem = i;
+                    foundid = pnewList->at(0).id;
                     Smax = dmax;
                 }
+                pnewList->clean();
+                j++;
             }
-            
-            cout<<event.code<<": "<<Smax<<endl;
+            cout<<event.code<<": "<<foundid<<endl;
             
             return true;
         }
@@ -296,8 +304,11 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
         
         
     }
-    
-    
+    if(code=="10")
+    {
+        cout<<event.code<<": "<<endl;
+        return true;
+    }
     
     /// NOTE: The output of the event will be printed on one line
     /// end by the endline character.
