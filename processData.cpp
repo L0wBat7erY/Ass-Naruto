@@ -497,7 +497,7 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
             cout<<event.code<<": "<<-1<<endl;
             return true;
         }
-        else return false;
+        
     }
     
     /// NOTE: The output of the event will be printed on one line
