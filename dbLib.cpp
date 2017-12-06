@@ -38,7 +38,7 @@ void loadNinjaDB(char* fName, L1List<NinjaInfo_t> &db) {
     while(!data.eof())
     {
         if(str=="") return;
-        if(sodong>100000) break;
+        //if(sodong>1000000) break;
         getline(data, str);
         stringstream ss;
         ss<<str;
@@ -52,14 +52,39 @@ void loadNinjaDB(char* fName, L1List<NinjaInfo_t> &db) {
         int date, mon, year, h, min, sec;
         ss>>date>>comma>>mon>>comma>>year;
         ss>>h>>comma>>min>>comma>>sec>>comma;
-        
+        char mangchuaidgoc[ID_MAX_LENGTH];
         for(i=0; i<10; i++)
         {
             ss>>comma;
             if(comma == ',') break;
-            ninja.id[i]=comma;
+            mangchuaidgoc[i]=comma;
         }
-        ninja.id[i] = '\0';
+        mangchuaidgoc[i] = '\0';
+        if(i==1)
+        {
+            ninja.id[0] = '0';
+            ninja.id[1] = '0';
+            ninja.id[2] = '0';
+            ninja.id[3] = mangchuaidgoc[0];
+            ninja.id[4] = '\0';
+        }
+        if(i==2)
+        {
+            ninja.id[0] = '0';
+            ninja.id[1] = '0';
+            ninja.id[2] = mangchuaidgoc[0];
+            ninja.id[3] = mangchuaidgoc[1];
+            ninja.id[4] = '\0';
+        }
+        if(i==3)
+        {
+            ninja.id[0] = '0';
+            ninja.id[1] = mangchuaidgoc[0];
+            ninja.id[2] = mangchuaidgoc[1];
+            ninja.id[3] = mangchuaidgoc[2];
+            ninja.id[4] = '\0';
+        }
+        if(i==4) strcpy(ninja.id, mangchuaidgoc);
         ss>>ninja.longitude>>comma>>ninja.latitude;
         
         struct tm t;

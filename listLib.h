@@ -46,6 +46,10 @@ class L1List {
 public:
     L1List() : _pHead(NULL), _size(0) {}
     ~L1List(){}
+    
+    L1Item<T>*      getHead(){
+        return _pHead;
+    }
 
     void    clean();
     bool    isEmpty() {
@@ -189,10 +193,16 @@ template <class T>
 bool L1List<T>::find(T& a, int& idx)
 {
     L1Item<T>* p = _pHead;
-    for(p=_pHead; p!=NULL; p=p->pNext)
+    int i = 0;
+    while(p)
     {
-        idx++;
-        if(p->data == a) return true;
+        if(p->data == a)
+        {
+            idx = i;
+            return true;
+        }
+        i++;
+        p=p->pNext;
     }
     return false;
 }

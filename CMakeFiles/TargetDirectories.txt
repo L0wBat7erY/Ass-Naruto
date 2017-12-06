@@ -1,0 +1,3 @@
+/home/sierra/Desktop/share/Downloads/DSA171-A01-master/CMakeFiles/edit_cache.dir
+/home/sierra/Desktop/share/Downloads/DSA171-A01-master/CMakeFiles/rebuild_cache.dir
+/home/sierra/Desktop/share/Downloads/DSA171-A01-master/CMakeFiles/a01.dir

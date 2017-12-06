@@ -1,0 +1,1 @@
+/usr/bin/c++    -std=c++11   CMakeFiles/a01.dir/main.cpp.o CMakeFiles/a01.dir/eventLib.cpp.o CMakeFiles/a01.dir/dbLib.cpp.o CMakeFiles/a01.dir/processData.cpp.o  -o a01 -rdynamic 
