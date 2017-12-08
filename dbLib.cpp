@@ -24,7 +24,7 @@ using namespace std;
 
 void    strPrintTime(char* des, time_t& t) {
     tm *pTime = localtime(&t);
-    strftime(des, 26, "%Y-%m-%d %H:%M:%S", pTime);
+    strftime(des, 26, "%Y-%d-%m %H:%M:%S", pTime);
 }
 
 void loadNinjaDB(char* fName, L1List<NinjaInfo_t> &db) {
@@ -38,7 +38,7 @@ void loadNinjaDB(char* fName, L1List<NinjaInfo_t> &db) {
     while(!data.eof())
     {
         if(str=="") return;
-        //if(sodong>1000000) break;
+        
         getline(data, str);
         stringstream ss;
         ss<<str;
@@ -84,7 +84,7 @@ void loadNinjaDB(char* fName, L1List<NinjaInfo_t> &db) {
             ninja.id[3] = mangchuaidgoc[2];
             ninja.id[4] = '\0';
         }
-        if(i==4) strcpy(ninja.id, mangchuaidgoc);
+        if(i>=4 && i<=ID_MAX_LENGTH) strcpy(ninja.id, mangchuaidgoc);
         ss>>ninja.longitude>>comma>>ninja.latitude;
         
         struct tm t;
@@ -116,7 +116,7 @@ void process(L1List<ninjaEvent_t>& eventList, L1List<NinjaInfo_t>& bList) {
     void*       pGData = NULL;
     initNinjaGlobalData(&pGData);
     
-    
+    pGData = eventList.getHead();
     
     while (!eventList.isEmpty()) {
         if(!processEvent(eventList[0], bList, pGData))

@@ -62,7 +62,7 @@ public:
     T&      at(int i);
     T&      operator[](int i);
 
-    bool    find(T& a, int& idx);
+    bool    find(T& a);
     int     insert(int i, T& a);
     int     remove(int i);
 
@@ -190,18 +190,15 @@ T& L1List<T>::operator[](int i)
 }
 
 template <class T>
-bool L1List<T>::find(T& a, int& idx)
+bool L1List<T>::find(T& a)
 {
     L1Item<T>* p = _pHead;
-    int i = 0;
     while(p)
     {
         if(p->data == a)
         {
-            idx = i;
             return true;
         }
-        i++;
         p=p->pNext;
     }
     return false;
