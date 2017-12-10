@@ -24,7 +24,7 @@ using namespace std;
 
 void    strPrintTime(char* des, time_t& t) {
     tm *pTime = localtime(&t);
-    strftime(des, 26, "%Y-%d-%m %H:%M:%S", pTime);
+    strftime(des, 26, "%Y-%m-%d %H:%M:%S", pTime);
 }
 
 void loadNinjaDB(char* fName, L1List<NinjaInfo_t> &db) {
@@ -50,7 +50,7 @@ void loadNinjaDB(char* fName, L1List<NinjaInfo_t> &db) {
             if(comma == ',') break;
         }
         int date, mon, year, h, min, sec;
-        ss>>date>>comma>>mon>>comma>>year;
+        ss>>mon>>comma>>date>>comma>>year;
         ss>>h>>comma>>min>>comma>>sec>>comma;
         char mangchuaidgoc[ID_MAX_LENGTH];
         for(i=0; i<10; i++)

@@ -18,13 +18,13 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
     {
         if(code == "0")
         {
-            cout<<event.code<<": ";
+            cout<<event.code<<":";
             L1Item<ninjaEvent>* p;
             p = (L1Item<ninjaEvent>*) pGData;
             
             while(p!=NULL)
             {
-                cout<<p->data.code<<" ";
+                cout<<" "<<p->data.code;
                 p=p->pNext;
             }
             cout<<endl;
@@ -126,7 +126,8 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
             }
             
             cout<<event.code<<": "<<foundid<<endl;
-            
+            psameList->clean();
+            pdiffList->clean();
             return true;
         }
         
@@ -145,7 +146,8 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
             }
             
             codeid[j] = '\0';
-            int dem=0;
+            int dem=0, n=0;
+            double d=0, s=0;
             L1Item<NinjaInfo>* p = nList.getHead();
             L1List<NinjaInfo>* pList = new L1List<NinjaInfo>;
             for(p = nList.getHead(); p->pNext!=NULL; p=p->pNext)
@@ -156,6 +158,13 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
                     pList->insertHead(p->data);
                 }
             }
+            if(dem==1)
+            {
+                char des[30];
+                strPrintTime(des, pList->getHead()->data.timestamp);
+                cout<<event.code<<": "<<des<<endl;
+                return true;
+            }
             if(dem==0)
             {
                 cout<<event.code<<": "<<-1<<endl;
@@ -165,24 +174,28 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
             L1Item<NinjaInfo>* pre = pList->getHead();
             p=pList->getHead()->pNext;
             L1Item<NinjaInfo>* pcur=pre;
-            double d=distanceEarth(pre->data.latitude, pre->data.longitude, p->data.latitude, p->data.longitude);
+            d=distanceEarth(pre->data.latitude, pre->data.longitude, p->data.latitude, p->data.longitude);
+            int socdlai=0;
             if(d<=0.005)
             {
                 while(p!=NULL)
                 {
-                    double s = distanceEarth(pcur->data.latitude, pcur->data.longitude, p->data.latitude, p->data.longitude);
+                    s = distanceEarth(pcur->data.latitude, pcur->data.longitude, p->data.latitude, p->data.longitude);
                     if(s>0.005)
                     {
+                        socdlai++;
                         pre=p;
                         break;
                     }
+                    if(d==s) n++;
                     p=p->pNext;
                 }
             }
-                
+            
             char des[30];
             strPrintTime(des, pre->data.timestamp);
             cout<<event.code<<": "<<des<<endl;
+            
             pList->clean();
             return true;
         }
@@ -207,6 +220,7 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
                     pList->insertHead(p->data);
                 }
             }
+            
             if(dem==0)
             {
                 cout<<event.code<<": "<<-1<<endl;
@@ -242,10 +256,13 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
                 pre = pre->pNext;
                 p=p->pNext;
             }
-            char des[30];
-            strPrintTime(des, pcur->data.timestamp);
-            
-            cout<<event.code<<": "<<des<<endl;
+            if(pcur!=NULL)
+            {
+                char des[30];
+                strPrintTime(des, pcur->data.timestamp);
+                cout<<event.code<<": "<<des<<endl;
+            }
+            else cout<<event.code<<": "<<"Non-stop"<<endl;
             pList->clean();
             return true;
         }
@@ -309,7 +326,7 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
             
             
             cout<<event.code<<": "<<j<<endl;
-            
+            pList->clean();
             return true;
         }
         
@@ -352,7 +369,7 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
             }
             
             cout<<event.code<<": "<<max<<endl;
-            
+            pList->clean();
             return true;
         }
         
@@ -365,16 +382,16 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
         L1List<NinjaInfo>* psameList = new L1List<NinjaInfo>;
         L1Item<NinjaInfo>* pdiff = nList.getHead();
         L1Item<NinjaInfo>* p = NULL;
-        string foundid;
+        string foundid1;
         
         time_t movetime = 0;
         time_t maxmovetime = 0;
         
         pdiffList->insertHead(pdiff->data);
+        
         for(pdiff = nList.getHead(); pdiff!=NULL; pdiff=pdiff->pNext)
         {
-            if(pdiffList->find(pdiff->data)==false)
-                pdiffList->insertHead(pdiff->data);
+            if(pdiffList->find(pdiff->data)==false) pdiffList->insertHead(pdiff->data);
         }
         
         pdiff = pdiffList->getHead();
@@ -385,19 +402,19 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
                 if(strcmp(p->data.id, pdiff->data.id)==0) psameList->insertHead(p->data);
             }
             psameList->reverse();
+            
             L1Item<NinjaInfo>* pre = psameList->getHead();
             p=psameList->getHead()->pNext;
-            
             L1Item<NinjaInfo>* pcur = NULL;
             L1Item<NinjaInfo>* pfol = NULL;
             while(p!=NULL)
             {
                 double d=distanceEarth(pre->data.latitude, pre->data.longitude, p->data.latitude, p->data.longitude);
                 
-                
+                movetime = movetime + (p->data.timestamp - pre->data.timestamp);
                 if(d<=0.005)
                 {
-                    
+                    movetime = movetime - (p->data.timestamp - pre->data.timestamp);
                     pcur = pre;
                     pre=pre->pNext;
                     pfol = pcur;
@@ -412,24 +429,27 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
                     }
                     pre = pfol;
                     p = pre->pNext;
-                    
+                    movetime = movetime + (p->data.timestamp - pre->data.timestamp);
                     if(p==NULL) break;
                 }
-                movetime += p->data.timestamp - pre->data.timestamp;
+                
                 pre = pre->pNext;
                 p=p->pNext;
-                
             }
-            psameList->clean();
             if(maxmovetime<=movetime)
             {
                 maxmovetime = movetime;
-                foundid = pdiff->data.id;
+                foundid1 = psameList->getHead()->data.id;
+                
             }
+            
             movetime=0;
+            psameList->clean();
             pdiff=pdiff->pNext;
         }
-        cout<<event.code<<": "<<foundid<<endl;
+        
+        cout<<event.code<<": "<<foundid1<<endl;
+        pdiffList->clean();
         return true;
     }
     
@@ -464,7 +484,14 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
                 p=p->pNext;
             }
             cout<<event.code<<": "<<pre->data.id<<endl;
-            pList->clean();
+            p = nList.getHead();
+            
+            while(p!=NULL)
+            {
+                if(strcmp(p->data.id, pre->data.id)==0) nList.remove(pre->data);
+                
+                p=p->pNext;
+            }
             return true;
         }
         else
@@ -541,6 +568,8 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
         }
         
         cout<<event.code<<": "<<foundid<<endl;
+        pdiffList->clean();
+        return true;
     }
     
     
@@ -553,15 +582,15 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
     
     if(code=="14")
     {
-        cout<<event.code<<": ";
+        cout<<event.code<<":";
         L1List<NinjaInfo>* pdiffList = new L1List<NinjaInfo>;
         L1List<NinjaInfo>* psameList = new L1List<NinjaInfo>;
         L1List<NinjaInfo>* pmoveList = new L1List<NinjaInfo>;
         L1Item<NinjaInfo>* pdiff = nList.getHead();
         L1Item<NinjaInfo>* p = NULL;
-        
-        
-        
+        int khongcoid=0;
+        int flag1=0;
+        int flag2=0;
         pdiffList->insertHead(pdiff->data);
         for(pdiff = nList.getHead(); pdiff!=NULL; pdiff=pdiff->pNext)
         {
@@ -572,22 +601,27 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
         pdiff = pdiffList->getHead();
         while(pdiff!=NULL)
         {
-            for(p=nList.getHead(); p!=NULL; p=p->pNext)
+            p=nList.getHead();
+            while(p!=NULL)
             {
                 if(strcmp(p->data.id, pdiff->data.id)==0) psameList->insertHead(p->data);
+                p=p->pNext;
             }
             psameList->reverse();
             L1Item<NinjaInfo>* pre = psameList->getHead();
             p=psameList->getHead()->pNext;
             L1Item<NinjaInfo>* pcur = NULL;
             L1Item<NinjaInfo>* pfol = NULL;
+            L1Item<NinjaInfo>* pnew;
             while(p!=NULL)
             {
+                
                 double d=distanceEarth(pre->data.latitude, pre->data.longitude, p->data.latitude, p->data.longitude);
                 
                 pmoveList->insertHead(pre->data);
                 if(d<=0.005)
                 {
+                    flag1=0;
                     pcur = pre;
                     pre=pre->pNext;
                     pfol = pcur;
@@ -595,55 +629,69 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
                     {
                         d=distanceEarth(pcur->data.latitude, pcur->data.longitude, pre->data.latitude, pre->data.longitude);
                         
-                        if(d>0.005) break;
+                        if(d>0.005) {flag1=1; break;}
                         
                         pfol = pfol->pNext;
                         pre = pre->pNext;
                     }
                     pre = pfol;
+                    
                     p = pre->pNext;
-                    if(p==NULL) break;
+                    if(p==NULL) { flag2=1; break;}
                 }
                 
                 pre = pre->pNext;
                 p=p->pNext;
+                
             }
+            pnew=psameList->getHead();
+            while(pnew->pNext!=NULL){
+                if(pre->data.timestamp==pnew->pNext->data.timestamp) break;
+                pnew=pnew->pNext;
+            }
+            if(distanceEarth(pnew->data.latitude, pnew->data.longitude, pre->data.latitude, pre->data.longitude)>0.005) pmoveList->insertHead(pre->data);
+            flag2=0; flag1=0;
             psameList->clean();
             pmoveList->reverse();
             if(pmoveList->getSize()>1)
             {
                 L1Item<NinjaInfo>* premove = pmoveList->getHead();
                 L1Item<NinjaInfo>* pmove = pmoveList->getHead()->pNext;
-                int dem=0;
-                while(premove->pNext!=NULL)
+                int dem = 0;
+                double s=0;
+                while(premove!=NULL)
                 {
                     while(pmove!=NULL)
                     {
-                        double s = distanceEarth(pmove->data.latitude, pmove->data.longitude, premove->data.latitude, premove->data.longitude);
+                        s = distanceEarth(pmove->data.latitude, pmove->data.longitude, premove->data.latitude, premove->data.longitude);
+                        //if(strcmp(pmoveList->getHead()->data.id, "8840")==0) cout<<" "<<s<<"   ";
                         if(s<=0.005)
                         {
-                            dem++;
-                            
+                            dem=1;
                             break;
                         }
                         pmove=pmove->pNext;
                     }
                     if(dem==1)
                     {
-                        cout<<premove->data.id<<" ";
+                        cout<<" "<<pmoveList->getHead()->data.id;
+                        khongcoid++;
                         break;
                     }
                     premove=premove->pNext;
                     pmove=premove->pNext;
                     if(pmove==NULL) break;
                 }
-            
-                pmoveList->clean();
-                dem=0;
+                //if(strcmp(pmoveList->getHead()->data.id, "8840")==0) cout<<" "<<distanceEarth(37.75703, -122.3901, 37.75704, -122.38986)<<premove->data.latitude;
             }
+            
+            
+            pmoveList->clean();
             pdiff=pdiff->pNext;
         }
+        if(khongcoid==0) cout<<" "<<-1;
         cout<<endl;
+        pdiffList->clean();
         return true;
     }
     
@@ -669,6 +717,6 @@ bool processEvent(ninjaEvent_t& event, L1List<NinjaInfo_t>& nList, void* pGData)
     
     /// NOTE: The output of the event will be printed on one line
     /// end by the endline character.
-    return true;
+    return false;
 }
 

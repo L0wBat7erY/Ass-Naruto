@@ -64,7 +64,7 @@ public:
 
     bool    find(T& a);
     int     insert(int i, T& a);
-    int     remove(int i);
+    int     remove(T& a);
 
     int     push_back(T& a);
     int     insertHead(T& a);
@@ -211,8 +211,26 @@ int L1List<T>::insert(int i, T& a)
 }
 
 template<class T>
-int L1List<T>::remove(int i)
+int L1List<T>::remove(T& a)
 {
+    L1Item<T>* p;
+    L1Item<T>* pre;
+    
+    pre=_pHead;
+    p=_pHead->pNext;
+    while(p!=NULL)
+    {
+        if(p->data==a)
+        {
+            pre->pNext=p->pNext;
+            delete p;
+            p=pre->pNext;
+            return 1;
+        }
+        pre=pre->pNext;
+        p=p->pNext;
+    }
+    
     return 0;
 }
 
